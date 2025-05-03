@@ -25,6 +25,60 @@ This script allows you to boot your Raspberry Pi from a USB stick, mount a backu
 
 ---
 
+## Set USB Boot in EEPROM (Raspberry Pi)
+
+Follow these steps to configure your Raspberry Pi to boot from USB by editing the EEPROM bootloader settings manually.
+
+### 1. Install the EEPROM Configuration Tool
+
+```bash
+sudo apt update
+sudo apt install -y rpi-eeprom
+```
+
+### 2. Edit the EEPROM Boot Configuration
+
+```bash
+sudo -E EDITOR=nano rpi-eeprom-config --edit
+```
+
+This will open the EEPROM configuration in a text editor.
+
+### 3. Set the Boot Order
+
+Find the line that starts with `BOOT_ORDER`, and change it to:
+
+```bash
+BOOT_ORDER=0xf641
+```
+
+| Priority | Value | Boot Device                    |
+| -------- | ----- | ------------------------------ |
+| 1st      | `4`   | **USB** (SSD/HDD, flash drive) |
+| 2nd      | `6`   | **NVMe** (PCIe SSD)            |
+| 3rd      | `1`   | **SD Card**                    |
+| Loop     | `f`   | **Restart** from the top       |
+
+This prioritizes USB devices while still allowing fallback options.
+
+### 4. Save and Exit
+
+Save the changes in the editor and close it. Then apply the updated configuration with:
+
+```bash
+sudo rpi-eeprom-update -d -f
+```
+
+### 5. Reboot the Raspberry Pi
+
+```bash
+sudo reboot
+```
+
+Your Raspberry Pi is now set to attempt booting from a USB device first.
+
+---
+
 ## Step-by-Step Setup
 
 ### 1. Prepare the USB Recovery Stick
@@ -91,10 +145,19 @@ On your **Synology NAS**:
 ssh <pi-username>@<pi-ip>
 ```
 
+> ⚠️ If you get a `REMOTE HOST IDENTIFICATION HAS CHANGED` error after restoring, it means the host key has changed (expected when re-imaging the system).
+> To fix it, run:
+>
+> ```bash
+> ssh-keygen -R <pi-ip>
+> ```
+>
+> Then try connecting again.
+
 **Download and run the restore script:**
 
 ```bash
-curl -s https://raw.githubusercontent.com/av1155/rpi-usb-nas-restore/main/restore.sh | bash
+bash <(curl -s https://raw.githubusercontent.com/av1155/rpi-usb-nas-restore/main/restore.sh)
 ```
 
 > The script will:
@@ -103,7 +166,7 @@ curl -s https://raw.githubusercontent.com/av1155/rpi-usb-nas-restore/main/restor
 > - Mount the NFS backup folder
 > - Let you choose a backup file and target disk
 > - Confirm and restore the system
-> - Reboot the Pi automatically when done
+> - Power off the Pi when done
 
 ---
 
@@ -119,5 +182,3 @@ curl -s https://raw.githubusercontent.com/av1155/rpi-usb-nas-restore/main/restor
 ## License
 
 [MIT License](LICENSE)
-
-# rpi-usb-nas-restore

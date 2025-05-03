@@ -140,8 +140,11 @@ else
     zcat "$FILE" | sudo dd of="$TARGET_DISK" bs=4M status=progress conv=fsync
 
     echo
-    echo "Syncing and rebooting..."
+    echo "Restore complete. Syncing disks..."
     sync
     sleep 2
-    sudo reboot
+    echo
+    echo "⚠️  Please power off the Pi, remove the USB recovery stick, then power it back on to boot from the restored system."
+    read -r -p "Press Enter to shut down the Pi safely..."
+    sudo poweroff
 fi
