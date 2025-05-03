@@ -85,19 +85,25 @@ On your **Synology NAS**:
 
 ### 4. SSH and Run the Restore Script
 
+**SSH into your Pi:**
+
 ```bash
 ssh <pi-username>@<pi-ip>
+```
+
+**Download and run the restore script:**
+
+```bash
 curl -s https://raw.githubusercontent.com/av1155/rpi-usb-nas-restore/main/restore.sh | bash
 ```
 
-The script will:
-
-- Prompt for your NAS IP
-- Mount the NFS backup folder
-- Let you choose a backup file
-- Let you choose the target disk
-- Confirm and restore
-- Reboot the Pi automatically
+> The script will:
+>
+> - Prompt for your NAS IP
+> - Mount the NFS backup folder
+> - Let you choose a backup file and target disk
+> - Confirm and restore the system
+> - Reboot the Pi automatically when done
 
 ---
 
@@ -113,4 +119,5 @@ The script will:
 ## License
 
 [MIT License](LICENSE)
+
 # rpi-usb-nas-restore
